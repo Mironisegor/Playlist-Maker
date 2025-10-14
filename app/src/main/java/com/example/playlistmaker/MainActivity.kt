@@ -110,7 +110,7 @@ private fun MenuItem(iconRes: Int, title: String, onClick: (() -> Unit)? = null)
         modifier = Modifier
             .fillMaxWidth()
             .height(66.dp)
-            .padding(horizontal = 12.dp, vertical = 20.dp)
+            .padding(horizontal = 16.dp)
             .then(
                 if (onClick != null) {
                     Modifier.clickable(onClick = onClick)
@@ -129,7 +129,8 @@ private fun MenuItem(iconRes: Int, title: String, onClick: (() -> Unit)? = null)
         )
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            fontFamily = AppTypography.YSD_Medium500,
+            fontSize = 22.sp,
             color = Color(0xFF212327),
             modifier = Modifier.weight(1f).padding(start = 16.dp)
         )

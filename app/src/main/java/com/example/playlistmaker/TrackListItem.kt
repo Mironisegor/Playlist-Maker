@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,15 +56,16 @@ fun TrackListItem(track: Track) {
                     fontFamily = AppTypography.YSD_Regular400,
                     fontSize = 17.sp
                 )
+                Spacer(modifier = Modifier.width(5.dp))
                 Box(
                     modifier = Modifier
-                        .size(6.dp)
-                        .padding(horizontal = 5.dp)
+                        .size(3.dp)
                         .background(
                             color = Color(color = 0xFFAEAFB4),
-                            shape = androidx.compose.foundation.shape.CircleShape
+                            shape = CircleShape
                         )
                 )
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(track.trackTime,
                     color = Color(color = 0xFFAEAFB4),
                     fontFamily = AppTypography.YSD_Regular400,

@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -138,34 +140,45 @@ private fun MenuItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 21.dp)
             .padding(end = 12.dp)
+            .padding(start = 16.dp)
+            .height(61.dp)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            fontFamily = AppTypography.YSD_Regular400,
+            fontSize = 16.sp,
             color = Color.Black,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 16.dp)
         )
 
         if (iconRes == null && isDark != null) {
-            Switch(
-                checked = isDark.value,
-                onCheckedChange = { isDark.value = it }
-            )
+            Box(Modifier
+                .height(40.dp)
+                .width(56.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Switch(
+                    checked = isDark.value,
+                    onCheckedChange = { isDark.value = it }
+                )
+            }
         } else if (iconRes != null) {
-            Icon(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                tint = Color(0xFFAEAFB4),
-                modifier = Modifier
-                    .width(iconWidth)
-                    .height(iconHeight)
-            )
+            Box(Modifier
+                .size(24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = null,
+                    tint = Color(0xFFAEAFB4),
+                    modifier = Modifier
+                        .width(iconWidth)
+                        .height(iconHeight)
+                )
+            }
         }
     }
 }

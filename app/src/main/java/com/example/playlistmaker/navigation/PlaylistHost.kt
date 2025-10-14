@@ -1,6 +1,10 @@
 package com.example.playlistmaker.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -8,15 +12,14 @@ import androidx.navigation.compose.composable
 import com.example.playlistmaker.MainScreen
 import com.example.playlistmaker.SearchScreen
 import com.example.playlistmaker.SettingsScreen
-
-enum class Screen(val route: String) {
-    MAIN("main"),
-    SEARCH("search"),
-    SETTINGS("settings")
-}
+import com.example.playlistmaker.viewmodel.SearchViewModel
 
 @Composable
 fun PlaylistHost(navController: NavHostController) {
+    val searchViewModel: SearchViewModel = viewModel(
+        factory = SearchViewModel.getViewModelFactory()
+    )
+
     NavHost(
         navController = navController,
         startDestination = Screen.MAIN.route
@@ -30,7 +33,9 @@ fun PlaylistHost(navController: NavHostController) {
 
         composable(Screen.SEARCH.route) {
             SearchScreen(
-                onBack = { navController.navigateBack() }
+                onBack = { navController.navigateBack() },
+                modifier = Modifier.padding(6.dp),
+                viewModel = searchViewModel
             )
         }
 

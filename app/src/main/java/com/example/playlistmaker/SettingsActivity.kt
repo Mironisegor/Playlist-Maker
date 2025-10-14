@@ -21,23 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.playlistmaker.ui.theme.PlaylistMakerTheme
 
-class SettingsActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            PlaylistMakerTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    SettingsScreen(onBack = { finish() })
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {
@@ -78,7 +64,8 @@ fun SettingsScreen(onBack: () -> Unit) {
 
             Text(
                 text = stringResource(R.string.settings_title),
-                style = MaterialTheme.typography.headlineSmall,
+                fontFamily = AppTypography.YSD_Medium500,
+                fontSize = 22.sp,
                 color = Color(0xFF1A1B22)
             )
         }

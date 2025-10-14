@@ -42,7 +42,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PlaylistMakerTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     val navController = rememberNavController()
                     PlaylistHost(navController = navController)
                 }
@@ -62,7 +65,7 @@ fun MainScreen(
             .background(color = Color(0xFF4169E1))
     ) {
         Text(
-            text = "Playlist maker",
+            text = stringResource(R.string.app_name),
             color = Color.White,
             fontSize = 26.sp,
             fontWeight = FontWeight.SemiBold,

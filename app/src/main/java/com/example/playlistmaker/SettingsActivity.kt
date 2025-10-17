@@ -2,21 +2,18 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -75,13 +72,13 @@ fun SettingsScreen(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Column {
-            MenuItem(
+            SettingsMenuItem(
                 title = stringResource(R.string.dark_theme),
                 iconRes = null,
                 isDark = isDark
             )
 
-            MenuItem(
+            SettingsMenuItem(
                 iconRes = R.drawable.share,
                 title = stringResource(R.string.share_app),
                 iconWidth = 16.dp,
@@ -95,7 +92,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 }
             )
 
-            MenuItem(
+            SettingsMenuItem(
                 iconRes = R.drawable.support,
                 title = stringResource(R.string.write_to_devs),
                 iconWidth = 20.dp,
@@ -111,7 +108,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 }
             )
 
-            MenuItem(
+            SettingsMenuItem(
                 iconRes = R.drawable.chevron_right,
                 title = stringResource(R.string.user_agreement),
                 iconWidth = 8.dp,
@@ -126,63 +123,6 @@ fun SettingsScreen(onBack: () -> Unit) {
         }
     }
 }
-
-
-@Composable
-private fun MenuItem(
-    iconRes: Int?,
-    title: String,
-    onClick: (() -> Unit)? = null,
-    isDark: androidx.compose.runtime.MutableState<Boolean>? = null,
-    iconWidth: Dp = 24.dp,
-    iconHeight: Dp = 24.dp
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 12.dp)
-            .padding(start = 16.dp)
-            .height(61.dp)
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = title,
-            fontFamily = AppTypography.YSD_Regular400,
-            fontSize = 16.sp,
-            color = Color.Black,
-        )
-
-        if (iconRes == null && isDark != null) {
-            Box(Modifier
-                .height(40.dp)
-                .width(56.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Switch(
-                    checked = isDark.value,
-                    onCheckedChange = { isDark.value = it }
-                )
-            }
-        } else if (iconRes != null) {
-            Box(Modifier
-                .size(24.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = null,
-                    tint = Color(0xFFAEAFB4),
-                    modifier = Modifier
-                        .width(iconWidth)
-                        .height(iconHeight)
-                )
-            }
-        }
-    }
-}
-
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable

@@ -87,14 +87,14 @@ fun MainScreen(
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
-                MenuItem(
+                SettingsMenuItem(
                     iconRes = R.drawable.search,
                     title = stringResource(R.string.search_title),
                     onClick = onNavigateToSearch
                 )
-                MenuItem(iconRes = R.drawable.library, title = "Плейлисты")
-                MenuItem(iconRes = R.drawable.favorite_border, title = "Избранное")
-                MenuItem(
+                SettingsMenuItem(iconRes = R.drawable.library, title = "Плейлисты")
+                SettingsMenuItem(iconRes = R.drawable.favorite_border, title = "Избранное")
+                SettingsMenuItem(
                     iconRes = R.drawable.settings,
                     title = stringResource(R.string.settings_title),
                     onClick = onNavigateToSettings
@@ -105,7 +105,7 @@ fun MainScreen(
 }
 
 @Composable
-private fun MenuItem(iconRes: Int, title: String, onClick: (() -> Unit)? = null) {
+private fun SettingsMenuItem(iconRes: Int, title: String, onClick: (() -> Unit)? = null) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

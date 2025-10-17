@@ -1,8 +1,5 @@
 package com.example.playlistmaker
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -23,13 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,14 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
-import com.example.playlistmaker.ui.theme.PlaylistMakerTheme
 import com.example.playlistmaker.viewmodel.SearchViewModel
 
 
@@ -96,7 +85,6 @@ fun SearchScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Заменяем OutlinedTextField на BasicTextField
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,7 +102,6 @@ fun SearchScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Иконка поиска
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
@@ -128,7 +115,6 @@ fun SearchScreen(
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                // BasicTextField
                 BasicTextField(
                     value = text,
                     onValueChange = { text = it },
@@ -175,7 +161,7 @@ fun SearchScreen(
         when (screenState) {
             is SearchState.Initial -> {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Введите строку для поиска")
+                    Text(text = stringResource(R.string.input_string_for_search))
                 }
             }
 

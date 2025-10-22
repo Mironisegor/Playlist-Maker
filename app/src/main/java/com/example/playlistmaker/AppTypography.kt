@@ -11,7 +11,7 @@ object AppTypography {
     val YSD_Medium500 = FontFamily(
         Font(R.font.yst_medium, FontWeight.Companion.W500)
     )
-    val SecondaryFontFamily = FontFamily(
-        Font(R.font.ysd_thin, FontWeight.Companion.Normal)
+    val YSD_Medium400 = FontFamily(
+        Font(R.font.yst_medium, FontWeight.Companion.W400)
     )
 }

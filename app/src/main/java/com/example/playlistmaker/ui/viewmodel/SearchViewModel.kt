@@ -1,4 +1,4 @@
-package com.example.playlistmaker.viewmodel
+package com.example.playlistmaker.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,7 +7,6 @@ import com.example.playlistmaker.Creator
 import com.example.playlistmaker.SearchState
 import com.example.playlistmaker.domain.TracksRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -31,6 +30,11 @@ class SearchViewModel(
             }
         }
     }
+
+    fun resetSearchState() {
+        _searchScreenState.update { SearchState.Initial }
+    }
+
     companion object {
         fun getViewModelFactory(): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {

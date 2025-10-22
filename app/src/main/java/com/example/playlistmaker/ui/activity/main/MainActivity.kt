@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.activity.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -34,7 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
-import com.example.playlistmaker.navigation.PlaylistHost
+import com.example.playlistmaker.AppTypography
+import com.example.playlistmaker.R
+import com.example.playlistmaker.ui.navigation.PlaylistHost
 import com.example.playlistmaker.ui.theme.PlaylistMakerTheme
 
 class MainActivity : ComponentActivity() {
@@ -92,8 +94,16 @@ fun MainScreen(
                     title = stringResource(R.string.search_title),
                     onClick = onNavigateToSearch
                 )
-                SettingsMenuItem(iconRes = R.drawable.library, title = "Плейлисты")
-                SettingsMenuItem(iconRes = R.drawable.favorite_border, title = "Избранное")
+                SettingsMenuItem(
+                    iconRes = R.drawable.library,
+                    title = "Плейлисты",
+                    onClick = {}
+                )
+                SettingsMenuItem(
+                    iconRes = R.drawable.favorite_border,
+                    title = "Избранное",
+                    onClick = {}
+                )
                 SettingsMenuItem(
                     iconRes = R.drawable.settings,
                     title = stringResource(R.string.settings_title),

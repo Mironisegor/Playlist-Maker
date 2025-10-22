@@ -1,14 +1,13 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.activity.settings
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -18,12 +17,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.playlistmaker.AppTypography
+import com.example.playlistmaker.R
+import com.example.playlistmaker.ui.activity.main.SettingsMenuItem
 import com.example.playlistmaker.ui.theme.PlaylistMakerTheme
+import androidx.core.net.toUri
 
 
+@SuppressLint("UseKtx")
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
@@ -99,7 +102,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 iconHeight = 18.dp,
                 onClick = {
                     val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = Uri.parse("mailto:")
+                        data = "mailto:".toUri()
                         putExtra(Intent.EXTRA_EMAIL, arrayOf(devEmail))
                         putExtra(Intent.EXTRA_SUBJECT, emailSubject)
                         putExtra(Intent.EXTRA_TEXT, emailBody)
@@ -115,7 +118,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 iconHeight = 14.dp,
                 onClick = {
                     val agreementIntent = Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse(userAgreementLink)
+                        data = userAgreementLink.toUri()
                     }
                     context.startActivity(agreementIntent)
                 }

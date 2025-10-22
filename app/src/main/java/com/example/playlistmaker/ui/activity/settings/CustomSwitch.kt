@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.activity.settings
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background

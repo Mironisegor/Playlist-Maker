@@ -1,5 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.activity.search
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,8 +22,8 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,10 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
-import com.example.playlistmaker.viewmodel.SearchViewModel
+import com.example.playlistmaker.AppTypography
+import com.example.playlistmaker.R
+import com.example.playlistmaker.SearchState
+import com.example.playlistmaker.ui.viewmodel.SearchViewModel
 
 
 @Composable
@@ -152,7 +156,10 @@ fun SearchScreen(
                         tint = Color(0xFFAEAFB4),
                         modifier = Modifier
                             .size(20.dp)
-                            .clickable { text = "" }
+                            .clickable {
+                                text = ""
+                                viewModel.resetSearchState()
+                            }
                     )
                 }
             }
@@ -161,7 +168,6 @@ fun SearchScreen(
         when (screenState) {
             is SearchState.Initial -> {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = stringResource(R.string.input_string_for_search))
                 }
             }
 
@@ -173,19 +179,78 @@ fun SearchScreen(
 
             is SearchState.Success -> {
                 val tracks = (screenState as SearchState.Success).list
-                LazyColumn(
-                    modifier = modifier.fillMaxSize()
-                ) {
-                    items(tracks.size) { index ->
-                        TrackListItem(track = tracks[index])
+                if (tracks.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = modifier.fillMaxSize()
+                    ) {
+                        items(tracks.size) { index ->
+                            TrackListItem(track = tracks[index])
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.nothing_to_show),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .padding(bottom = 16.dp)
+                            )
+                            Text(
+                                text = stringResource(R.string.nothing_to_show),
+                                color = Color(0xFF1A1B22),
+                                fontFamily = AppTypography.YSD_Medium400,
+                                fontSize = 19.sp
+                            )
+                        }
                     }
                 }
             }
 
             is SearchState.Fail -> {
-                val error = (screenState as SearchState.Fail).error
-                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Ошибка: $error", color = Color.Red)
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.error_with_connection),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(120.dp)
+                                .padding(bottom = 16.dp)
+                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.problems_with_connection),
+                                color = Color(0xFF1A1B22),
+                                fontFamily = AppTypography.YSD_Medium400,
+                                fontSize = 19.sp
+                            )
+                            Text(
+                                text = stringResource(R.string.info_problem_with_connection),
+                                color = Color(0xFF1A1B22),
+                                fontFamily = AppTypography.YSD_Medium400,
+                                fontSize = 19.sp,
+                                modifier = Modifier
+                                    .padding(top = 20.dp)
+                                    .fillMaxWidth()
+                            )
+                        }
+                    }
                 }
             }
         }

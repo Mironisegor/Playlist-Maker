@@ -1,7 +1,8 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.activity.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,17 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.playlistmaker.AppTypography
+import com.example.playlistmaker.R
 import com.example.playlistmaker.data.network.Track
-import com.example.playlistmaker.ui.theme.PlaylistMakerTheme
 
 @Composable
 fun TrackListItem(track: Track) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(start=13.dp).height(61.dp),
+        modifier = Modifier.fillMaxWidth().padding(start=13.dp).height(61.dp).clickable {},
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -86,19 +86,5 @@ fun TrackListItem(track: Track) {
                     .height(14.dp)
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TrackListItemPreview() {
-    PlaylistMakerTheme {
-        val testTrack = Track(
-            trackName = "Blinding Lights",
-            artistName = "The Weeknd",
-            trackTime = "3:20"
-        )
-
-        TrackListItem(track = testTrack)
     }
 }

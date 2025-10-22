@@ -1,4 +1,4 @@
-package com.example.playlistmaker.navigation
+package com.example.playlistmaker.ui.navigation
 
 enum class Screen(val route: String) {
     MAIN("main"),

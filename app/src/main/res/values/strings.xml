@@ -23,4 +23,7 @@
     <string name="search_hint">Поиск</string>
     <string name="search_clear">Очистить</string>
     <string name="input_string_for_search">Введите строку для поиска</string>
+    <string name="nothing_to_show">Ничего не нашлось</string>
+    <string name="problems_with_connection">Проблемы со связью</string>
+    <string name="info_problem_with_connection">Загрузка не удалась. Проверьте подключение к интернету</string>
 </resources>

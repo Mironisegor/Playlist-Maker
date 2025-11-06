@@ -4,6 +4,7 @@ import com.example.playlistmaker.data.dto.TracksSearchResponse
 import com.example.playlistmaker.domain.NetworkClient
 import com.example.playlistmaker.creator.Storage
 import com.example.playlistmaker.data.dto.TracksSearchRequest
+import kotlinx.coroutines.CoroutineScope
 
 class RetrofitNetworkClient(private val storage: Storage) : NetworkClient {
 

@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">Playlist Maker</string>
     <string name="hello_android">Hello Android</string>
 
@@ -18,6 +19,8 @@
     <string name="share_chooser_title">Поделиться через</string>
 
     <string name="user_agreement_link">https://yandex.ru/legal/praktikum_offer/</string>
+
+    <string name="add_playlist">Добавить в плейлист</string>
 
     <string name="search_title">Поиск</string>
     <string name="search_hint">Поиск</string>

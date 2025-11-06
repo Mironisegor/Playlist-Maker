@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.playlistmaker.AppTypography
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.network.Track
+import com.example.playlistmaker.data.dto.Track
 
 @Composable
 fun TrackListItem(track: Track) {

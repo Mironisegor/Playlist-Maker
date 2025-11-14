@@ -38,17 +38,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.playlistmaker.AppTypography
+import com.example.playlistmaker.font.AppTypography
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SearchState
-import com.example.playlistmaker.ui.viewmodel.SearchViewModel
+import com.example.playlistmaker.data.dto.SearchState
+import com.example.playlistmaker.viewmodel.SearchViewModel
 
 
 @Composable
 fun SearchScreen(
     onBack: () -> Unit,
     modifier: Modifier,
-    viewModel: SearchViewModel
+    viewModel: SearchViewModel,
+    onNavigateToTrackDetails: (com.example.playlistmaker.data.dto.Track) -> Unit = {}
 ) {
     var text by remember { mutableStateOf("") }
     val screenState by viewModel.searchScreenState.collectAsState()
@@ -66,7 +67,11 @@ fun SearchScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .size(24.dp),
+                    .size(24.dp)
+                    .clickable {
+                        viewModel.resetSearchState()
+                        onBack()
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -75,7 +80,6 @@ fun SearchScreen(
                     tint = Color(0xFF1A1B22),
                     modifier = Modifier
                         .size(16.dp)
-                        .clickable(onClick = onBack)
                 )
             }
             Spacer(modifier = Modifier.width(24.dp))
@@ -168,6 +172,7 @@ fun SearchScreen(
         when (screenState) {
             is SearchState.Initial -> {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = stringResource(R.string.input_string_for_search))
                 }
             }
 
@@ -184,7 +189,12 @@ fun SearchScreen(
                         modifier = modifier.fillMaxSize()
                     ) {
                         items(tracks.size) { index ->
-                            TrackListItem(track = tracks[index])
+                            TrackListItem(
+                                track = tracks[index],
+                                onClick = {
+                                    onNavigateToTrackDetails(tracks[index])
+                                }
+                            )
                         }
                     }
                 } else {

@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
-import com.example.playlistmaker.AppTypography
+import com.example.playlistmaker.font.AppTypography
 import com.example.playlistmaker.R
 import com.example.playlistmaker.ui.navigation.PlaylistHost
 import com.example.playlistmaker.ui.theme.PlaylistMakerTheme
@@ -59,7 +59,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     onNavigateToSearch: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    onNavigateToPlaylists: () -> Unit,
+    onNavigateToFavorites: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -96,13 +98,13 @@ fun MainScreen(
                 )
                 SettingsMenuItem(
                     iconRes = R.drawable.library,
-                    title = "Плейлисты",
-                    onClick = {}
+                    title = stringResource(R.string.playlists),
+                    onClick = onNavigateToPlaylists
                 )
                 SettingsMenuItem(
                     iconRes = R.drawable.favorite_border,
                     title = "Избранное",
-                    onClick = {}
+                    onClick = onNavigateToFavorites
                 )
                 SettingsMenuItem(
                     iconRes = R.drawable.settings,
@@ -161,7 +163,9 @@ private fun MainScreenPreview() {
     PlaylistMakerTheme { 
         MainScreen(
             onNavigateToSearch = {},
-            onNavigateToSettings = {}
+            onNavigateToSettings = {},
+            onNavigateToPlaylists = {},
+            onNavigateToFavorites = {}
         ) 
     }
 }

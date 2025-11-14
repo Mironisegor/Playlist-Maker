@@ -1,32 +1,43 @@
-package com.example.playlistmaker.ui.viewmodel
+package com.example.playlistmaker.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.Creator
-import com.example.playlistmaker.SearchState
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.data.dto.SearchState
+import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.domain.TracksRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
-
 class SearchViewModel(
     private val tracksRepository: TracksRepository
 ) : ViewModel() {
     private val _searchScreenState = MutableStateFlow<SearchState>(SearchState.Initial)
     val searchScreenState  = _searchScreenState.asStateFlow()
 
-    fun search(whatSearch: String){
+    private val _selectedTrack = MutableStateFlow<Track?>(null)
+    val selectedTrack = _selectedTrack.asStateFlow()
+    
+    fun setSelectedTrack(track: Track) {
+        _selectedTrack.value = track
+    }
+
+    fun search(whatSearch: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            val query = whatSearch.trim()
+            if (query.isEmpty()) {
+                _searchScreenState.update { SearchState.Initial }
+                return@launch
+            }
             try {
                 _searchScreenState.update { SearchState.Searching }
-                val list = tracksRepository.searchTracks(expression = whatSearch)
+                val list = tracksRepository.searchTracks(expression = query)
                 _searchScreenState.update { SearchState.Success(list = list) }
-            } catch (e: IOException){
-                _searchScreenState.update { SearchState.Fail(e.message.toString()) }
+            } catch (e: Exception) {
+                _searchScreenState.update { SearchState.Fail(e.message.orEmpty()) }
             }
         }
     }
@@ -34,7 +45,6 @@ class SearchViewModel(
     fun resetSearchState() {
         _searchScreenState.update { SearchState.Initial }
     }
-
     companion object {
         fun getViewModelFactory(): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {

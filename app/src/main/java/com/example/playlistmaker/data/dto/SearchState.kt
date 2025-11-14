@@ -1,6 +1,4 @@
-package com.example.playlistmaker
-
-import com.example.playlistmaker.data.dto.Track
+package com.example.playlistmaker.data.dto
 
 sealed class SearchState {
     object Initial: SearchState()

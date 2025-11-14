@@ -1,8 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.font
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import com.example.playlistmaker.R
 
 object AppTypography {
     val YSD_Regular400 = FontFamily(
@@ -13,5 +14,9 @@ object AppTypography {
     )
     val YSD_Medium400 = FontFamily(
         Font(R.font.yst_medium, FontWeight.Companion.W400)
+    )
+
+    val YSD_Bold700 = FontFamily(
+        Font(R.font.yst_bold, FontWeight.Companion.W700)
     )
 }

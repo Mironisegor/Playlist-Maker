@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,13 +25,14 @@ fun PlaylistListItem(playlist: Playlist, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 13.dp)
+            .padding(top = 5.dp)
             .clickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            modifier = Modifier.size(48.dp),
-            painter = painterResource(id = R.drawable.ic_music),
+            modifier = Modifier.size(45.dp).padding(end=8.dp),
+            painter = painterResource(id = R.drawable.add_photo_icon),
             contentDescription = playlist.name,
             colorFilter = ColorFilter.tint(Color.Gray)
         )
@@ -39,8 +41,8 @@ fun PlaylistListItem(playlist: Playlist, onClick: () -> Unit) {
             horizontalAlignment = Alignment.Start
         ) {
             Text(playlist.name, fontSize = 16.sp)
-            val text = "${playlist.tracks.size} tracks"
-            Text(text, fontSize = 11.sp, color = Color.Gray)
+            val text = "${playlist.tracks.size} треков"
+            Text(text, fontSize = 11.sp, color = Color(0xFFAEAFB4))
         }
     }
 }

@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.playlistmaker.AppTypography
+import com.example.playlistmaker.font.AppTypography
 import com.example.playlistmaker.R
 import com.example.playlistmaker.ui.activity.main.SettingsMenuItem
 import com.example.playlistmaker.ui.theme.PlaylistMakerTheme

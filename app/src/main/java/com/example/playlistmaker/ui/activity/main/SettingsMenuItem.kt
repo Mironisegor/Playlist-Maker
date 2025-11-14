@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.playlistmaker.AppTypography
+import com.example.playlistmaker.font.AppTypography
 import com.example.playlistmaker.ui.activity.settings.CustomSwitch
 
 @Composable

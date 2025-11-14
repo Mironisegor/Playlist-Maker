@@ -1,27 +1,28 @@
 package com.example.playlistmaker.data.network
 
-import com.example.playlistmaker.creator.Storage
 import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.data.dto.TracksSearchRequest
 import com.example.playlistmaker.data.dto.TracksSearchResponse
 import com.example.playlistmaker.database.DatabaseMock
+import com.example.playlistmaker.domain.NetworkClient
 import com.example.playlistmaker.domain.TracksRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlin.math.abs
 
 
 class TracksRepositoryImpl(
     private val scope: CoroutineScope,
-    private val networkClient: RetrofitNetworkClient,
+    private val networkClient: NetworkClient,
 ) : TracksRepository {
-    private val database = DatabaseMock(
-        scope = scope
-    )
+    private val database = DatabaseMock.getInstance(scope)
 
     override suspend fun searchTracks(expression: String): List<Track> {
-        val response: TracksSearchResponse = networkClient.doRequest(TracksSearchRequest(expression))
-        return response.results.map { dto -> dto.toDomainTrack() }
+        if (expression.isBlank()) return emptyList()
+        val response = networkClient.doRequest(TracksSearchRequest(expression.trim()))
+        if (response !is TracksSearchResponse) return emptyList()
+        return response.results.mapNotNull { dto -> dto.toDomainTrack() }
     }
 
     override fun getTrackByNameAndArtist(track: Track): Flow<Track?> {
@@ -29,15 +30,18 @@ class TracksRepositoryImpl(
     }
 
     override suspend fun insertSongToPlaylist(track: Track, playlistId: Long) {
-        database.insertTrack(track.copy(playlistId = playlistId))
+        val normalized = track.ensureId().copy(playlistId = playlistId)
+        database.insertTrack(normalized)
     }
 
     override suspend fun deleteSongFromPlaylist(track: Track) {
-        database.insertTrack(track.copy(playlistId = 0))
+        val normalized = track.ensureId().copy(playlistId = 0)
+        database.insertTrack(normalized)
     }
 
     override suspend fun updateTrackFavoriteStatus(track: Track, isFavorite: Boolean) {
-        database.insertTrack(track.copy(favorite = isFavorite))
+        val normalized = track.ensureId().copy(favorite = isFavorite)
+        database.insertTrack(normalized)
     }
 
     override fun getFavoriteTracks(): Flow<List<Track>> {
@@ -49,16 +53,30 @@ class TracksRepositoryImpl(
     }
 }
 
-private fun TrackDto.toDomainTrack(): Track {
-    val minutes = trackTimeMillis / 60000
-    val seconds = (trackTimeMillis % 60000) / 1000
+private fun TrackDto.toDomainTrack(): Track? {
+    val name = trackName?.takeIf { it.isNotBlank() } ?: return null
+    val artist = artistName?.takeIf { it.isNotBlank() } ?: return null
+    val durationMillis = trackTimeMillis ?: 0L
+    val minutes = durationMillis / 60000
+    val seconds = (durationMillis % 60000) / 1000
     val time = String.format("%d:%02d", minutes, seconds)
     return Track(
-        id = 0,
+        id = (trackId?.takeIf { it != 0L } ?: generateTrackId(name, artist)),
         playlistId = 0,
         favorite = false,
-        trackName = trackName,
-        artistName = artistName,
-        trackTime = time
+        trackName = name,
+        artistName = artist,
+        trackTime = time,
+        artworkUrl = artworkUrl100
     )
+}
+
+private fun Track.ensureId(): Track {
+    if (id != 0L) return this
+    return copy(id = generateTrackId(trackName, artistName))
+}
+
+private fun generateTrackId(trackName: String, artistName: String): Long {
+    val hash = (trackName + "_" + artistName).hashCode().toLong()
+    return abs(hash)
 }

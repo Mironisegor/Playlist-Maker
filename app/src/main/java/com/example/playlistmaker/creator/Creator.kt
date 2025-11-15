@@ -1,13 +1,19 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.playlistmaker.database.AppDatabase
 import com.example.playlistmaker.domain.ITunesApiService
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.network.TracksRepositoryImpl
 import com.example.playlistmaker.data.network.PlaylistsRepositoryImpl
+import com.example.playlistmaker.data.preferences.SearchHistoryPreferences
+import com.example.playlistmaker.data.preferences.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.domain.TracksRepository
 import com.example.playlistmaker.domain.PlaylistsRepository
+import com.example.playlistmaker.domain.SearchHistoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
@@ -16,11 +22,16 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "search_history_preferences")
+
 private const val ITUNES_BASE_URL = "https://itunes.apple.com/"
 
 object Creator {
     @Volatile
     private var database: AppDatabase? = null
+    
+    @Volatile
+    private var dataStore: DataStore<Preferences>? = null
 
     private val okHttpClient: OkHttpClient by lazy {
         val builder = OkHttpClient.Builder()
@@ -60,6 +71,13 @@ object Creator {
                 }
             }
         }
+        if (dataStore == null) {
+            synchronized(this) {
+                if (dataStore == null) {
+                    dataStore = context.dataStore
+                }
+            }
+        }
     }
 
     private fun getDatabase(): AppDatabase {
@@ -83,5 +101,11 @@ object Creator {
             scope = scope,
             database = getDatabase()
         )
+    }
+
+    fun getSearchHistoryRepository(): SearchHistoryRepository {
+        val dataStoreInstance = dataStore ?: throw IllegalStateException("DataStore not initialized. Call initDatabase(context) first.")
+        val searchHistoryPreferences = SearchHistoryPreferences(dataStoreInstance)
+        return SearchHistoryRepositoryImpl(searchHistoryPreferences)
     }
 }

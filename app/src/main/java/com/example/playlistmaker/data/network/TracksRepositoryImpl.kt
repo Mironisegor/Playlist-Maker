@@ -4,19 +4,22 @@ import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.data.dto.TracksSearchRequest
 import com.example.playlistmaker.data.dto.TracksSearchResponse
-import com.example.playlistmaker.database.DatabaseMock
+import com.example.playlistmaker.database.AppDatabase
+import com.example.playlistmaker.database.entity.TrackEntity
 import com.example.playlistmaker.domain.NetworkClient
 import com.example.playlistmaker.domain.TracksRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlin.math.abs
 
 
 class TracksRepositoryImpl(
     private val scope: CoroutineScope,
     private val networkClient: NetworkClient,
+    private val database: AppDatabase,
 ) : TracksRepository {
-    private val database = DatabaseMock.getInstance(scope)
+    private val trackDao = database.trackDao()
 
     override suspend fun searchTracks(expression: String): List<Track> {
         if (expression.isBlank()) return emptyList()
@@ -26,31 +29,58 @@ class TracksRepositoryImpl(
     }
 
     override fun getTrackByNameAndArtist(track: Track): Flow<Track?> {
-        return database.getTrackByNameAndArtist(track)
+        return trackDao.getTrackByNameAndArtist(track.trackName, track.artistName)
+            .map { it?.toTrack() }
     }
 
     override suspend fun insertSongToPlaylist(track: Track, playlistId: Long) {
         val normalized = track.ensureId().copy(playlistId = playlistId)
-        database.insertTrack(normalized)
+        trackDao.insertTrack(normalized.toTrackEntity())
     }
 
     override suspend fun deleteSongFromPlaylist(track: Track) {
         val normalized = track.ensureId().copy(playlistId = 0)
-        database.insertTrack(normalized)
+        trackDao.insertTrack(normalized.toTrackEntity())
     }
 
     override suspend fun updateTrackFavoriteStatus(track: Track, isFavorite: Boolean) {
         val normalized = track.ensureId().copy(favorite = isFavorite)
-        database.insertTrack(normalized)
+        trackDao.insertTrack(normalized.toTrackEntity())
     }
 
     override fun getFavoriteTracks(): Flow<List<Track>> {
-        return database.getFavoriteTracks()
+        return trackDao.getFavoriteTracks().map { entities ->
+            entities.map { it.toTrack() }
+        }
     }
 
     override suspend fun deleteTracksByPlaylistId(playlistId: Long) {
-        database.deleteTracksByPlaylistId(playlistId)
+        trackDao.deleteTracksByPlaylistId(playlistId)
     }
+}
+
+private fun TrackEntity.toTrack(): Track {
+    return Track(
+        id = id,
+        playlistId = playlistId,
+        favorite = favorite,
+        trackName = trackName,
+        artistName = artistName,
+        trackTime = trackTime,
+        artworkUrl = artworkUrl
+    )
+}
+
+private fun Track.toTrackEntity(): TrackEntity {
+    return TrackEntity(
+        id = id,
+        playlistId = playlistId,
+        favorite = favorite,
+        trackName = trackName,
+        artistName = artistName,
+        trackTime = trackTime,
+        artworkUrl = artworkUrl
+    )
 }
 
 private fun TrackDto.toDomainTrack(): Track? {

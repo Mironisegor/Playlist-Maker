@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,15 +48,15 @@ fun TrackListItem(
     ) {
         Box(
             modifier = Modifier
-                .size(45.dp)
                 .padding(end = 8.dp)
+                .size(45.dp)
                 .clip(RoundedCornerShape(4.dp))
         ) {
             if (track.artworkUrl != null) {
                 AsyncImage(
                     model = track.artworkUrl,
                     contentDescription = "Обложка трека ${track.trackName}",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.ic_music),
                     error = painterResource(id = R.drawable.ic_music)
@@ -64,7 +65,7 @@ fun TrackListItem(
                 Image(
                     painter = painterResource(id = R.drawable.ic_music),
                     contentDescription = "Трек ${track.trackName}",
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }

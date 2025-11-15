@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class PlaylistViewModel() : ViewModel() {
     private val playlistsRepository: PlaylistsRepository =
-        PlaylistsRepositoryImpl(scope = viewModelScope)
+        Creator.getPlaylistsRepository(scope = viewModelScope)
     private val tracksRepository: TracksRepository = Creator.getTracksRepository(viewModelScope)
 
     val playlists: Flow<List<Playlist>> = playlistsRepository.getAllPlaylists()

@@ -36,12 +36,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.playlistmaker.font.AppTypography
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.ui.navigation.PlaylistHost
 import com.example.playlistmaker.ui.theme.PlaylistMakerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Creator.initDatabase(applicationContext)
         setContent {
             PlaylistMakerTheme {
                 Surface(

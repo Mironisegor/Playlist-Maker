@@ -171,8 +171,7 @@ fun SearchScreen(
 
         when (screenState) {
             is SearchState.Initial -> {
-                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = stringResource(R.string.input_string_for_search))
+                Box(modifier = modifier.fillMaxSize()) {
                 }
             }
 

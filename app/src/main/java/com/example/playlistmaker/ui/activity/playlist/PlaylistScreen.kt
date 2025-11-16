@@ -14,9 +14,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,13 +40,20 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.data.dto.Playlist
 import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.ui.activity.search.TrackListItem
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistScreen(
     playlist: Playlist,
     navigateBack: () -> Unit,
-    onNavigateToTrackDetails: (Track) -> Unit
+    onNavigateToTrackDetails: (Track) -> Unit,
+    onDeletePlaylist: () -> Unit
 ) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
     val totalMinutes = playlist.tracks.sumOf { track ->
         val timeParts = track.trackTime.split(":")
         if (timeParts.size == 2) {
@@ -145,7 +162,7 @@ fun PlaylistScreen(
             Box(
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable(onClick = {}),
+                    .clickable(onClick = { showBottomSheet = true }),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -168,5 +185,145 @@ fun PlaylistScreen(
                 )
             }
         }
+    }
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = playlist.name,
+                    fontFamily = AppTypography.YSD_Medium500,
+                    fontSize = 20.sp,
+                    color = Color(0xFF1A1B22),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text(
+                    text = "${playlist.tracks.size} треков",
+                    fontFamily = AppTypography.YSD_Regular400,
+                    fontSize = 16.sp,
+                    color = Color(0xFFAEAFB4),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                }
+                            }
+                        }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Поделиться",
+                        fontFamily = AppTypography.YSD_Regular400,
+                        fontSize = 16.sp,
+                        color = Color(0xFF1A1B22)
+                    )
+                }
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                }
+                            }
+                        }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Редактировать информацию",
+                        fontFamily = AppTypography.YSD_Regular400,
+                        fontSize = 16.sp,
+                        color = Color(0xFF1A1B22)
+                    )
+                }
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                    showDeleteDialog = true
+                                }
+                            }
+                        }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Удалить плейлист",
+                        fontFamily = AppTypography.YSD_Regular400,
+                        fontSize = 16.sp,
+                        color = Color(0xFF1A1B22)
+                    )
+                }
+            }
+        }
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = {
+                Text(
+                    text = "Хотите удалить плейлист \"${playlist.name}\"?",
+                    fontFamily = AppTypography.YSD_Regular400,
+                    fontSize = 16.sp,
+                    color = Color(0xFF1A1B22)
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        onDeletePlaylist()
+                        navigateBack()
+                    }
+                ) {
+                    Text(
+                        text = "ДА",
+                        fontFamily = AppTypography.YSD_Regular400,
+                        fontSize = 16.sp,
+                        color = Color(0xFFEC5757)
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteDialog = false }
+                ) {
+                    Text(
+                        text = "НЕТ",
+                        fontFamily = AppTypography.YSD_Regular400,
+                        fontSize = 16.sp,
+                        color = Color(0xFF1A1B22)
+                    )
+                }
+            }
+        )
     }
 }

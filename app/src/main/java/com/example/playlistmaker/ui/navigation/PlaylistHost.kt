@@ -31,7 +31,7 @@ fun PlaylistHost(navController: NavHostController) {
     val searchViewModel: SearchViewModel = viewModel(
         factory = SearchViewModel.getViewModelFactory()
     )
-    val playlistsViewModel: PlaylistViewModel = PlaylistViewModel()
+    val playlistsViewModel = PlaylistViewModel()
 
     NavHost(
         navController = navController,
@@ -71,6 +71,9 @@ fun PlaylistHost(navController: NavHostController) {
                     onNavigateToTrackDetails = { track ->
                         searchViewModel.setSelectedTrack(track)
                         navController.navigate(Screen.TRACK_DETAILS.route)
+                    },
+                    onDeletePlaylist = {
+                        playlistsViewModel.deletePlaylistById(currentPlaylist.id)
                     }
                 )
             }
@@ -89,7 +92,6 @@ fun PlaylistHost(navController: NavHostController) {
                 modifier = Modifier.padding(6.dp),
                 viewModel = searchViewModel,
                 onNavigateToTrackDetails = { track ->
-                    // Сохраняем трек в ViewModel для передачи на экран деталей
                     searchViewModel.setSelectedTrack(track)
                     navController.navigate(Screen.TRACK_DETAILS.route)
                 }
@@ -97,10 +99,8 @@ fun PlaylistHost(navController: NavHostController) {
         }
         
         composable(Screen.TRACK_DETAILS.route) {
-            // Получаем трек из ViewModel
             val track by searchViewModel.selectedTrack.collectAsState()
-            
-            // Отображаем экран только если трек выбран
+
             track?.let { currentTrack ->
                 TrackDetailsScreen(
                     track = currentTrack,
@@ -119,10 +119,10 @@ fun PlaylistHost(navController: NavHostController) {
             FavoritesScreen(
                 playlistViewModel = playlistsViewModel,
                 onNavigateToTrackDetails = { track ->
-                    // Передаем выбранный трек и открываем детали
                     searchViewModel.setSelectedTrack(track)
                     navController.navigate(Screen.TRACK_DETAILS.route)
-                }
+                },
+                onBack = { navController.popBackStack() }
             )
         }
     }

@@ -262,7 +262,7 @@ fun SearchScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 22.dp),
-                        thickness = 2.dp,
+                        thickness = 1.dp,
                         color = Color(0xFFAEAFB4)
                     )
                 }

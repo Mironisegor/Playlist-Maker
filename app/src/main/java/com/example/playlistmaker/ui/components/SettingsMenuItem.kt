@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.activity.main
+package com.example.playlistmaker.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.playlistmaker.font.AppTypography
-import com.example.playlistmaker.ui.activity.settings.CustomSwitch
+import com.example.playlistmaker.ui.theme.AppTypography
 
 @Composable
 fun SettingsMenuItem(
@@ -73,3 +72,4 @@ fun SettingsMenuItem(
         }
     }
 }
+

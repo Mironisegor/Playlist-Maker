@@ -55,7 +55,10 @@ class TracksRepositoryImpl(
     }
 
     override suspend fun deleteTracksByPlaylistId(playlistId: Long) {
-        trackDao.deleteTracksByPlaylistId(playlistId)
+        // Сначала обнуляем playlistId у избранных треков, чтобы они остались в избранном
+        trackDao.clearPlaylistIdForFavorites(playlistId)
+        // Затем удаляем треки, которые не в избранном
+        trackDao.deleteNonFavoriteTracksByPlaylistId(playlistId)
     }
 }
 

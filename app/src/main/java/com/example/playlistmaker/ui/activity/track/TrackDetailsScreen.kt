@@ -40,7 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.example.playlistmaker.font.AppTypography
+import com.example.playlistmaker.ui.theme.AppTypography
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.ui.viewmodel.PlaylistViewModel

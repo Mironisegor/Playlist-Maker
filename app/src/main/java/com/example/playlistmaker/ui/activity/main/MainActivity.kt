@@ -34,9 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
-import com.example.playlistmaker.font.AppTypography
+import com.example.playlistmaker.ui.theme.AppTypography
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.di.Creator
 import com.example.playlistmaker.ui.navigation.PlaylistHost
 import com.example.playlistmaker.ui.theme.PlaylistMakerTheme
 

@@ -66,8 +66,9 @@ class PlaylistsRepositoryImpl(
     }
 
     override suspend fun deletePlaylistById(id: Long) {
+        // Удаление треков плейлиста выполняется через TracksRepository.deleteTracksByPlaylistId()
+        // для правильной обработки избранных треков
         playlistDao.deletePlaylistById(id)
-        trackDao.deleteTracksByPlaylistId(id)
     }
 }
 

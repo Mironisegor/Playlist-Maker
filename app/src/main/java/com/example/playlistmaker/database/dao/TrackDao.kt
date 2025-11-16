@@ -25,6 +25,12 @@ interface TrackDao {
     @Update
     suspend fun updateTrack(track: TrackEntity)
 
+    @Query("UPDATE tracks SET playlistId = 0 WHERE playlistId = :playlistId AND favorite = 1")
+    suspend fun clearPlaylistIdForFavorites(playlistId: Long)
+
+    @Query("DELETE FROM tracks WHERE playlistId = :playlistId AND favorite = 0")
+    suspend fun deleteNonFavoriteTracksByPlaylistId(playlistId: Long)
+
     @Query("DELETE FROM tracks WHERE playlistId = :playlistId")
     suspend fun deleteTracksByPlaylistId(playlistId: Long)
 }

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.creator
+package com.example.playlistmaker.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -109,3 +109,4 @@ object Creator {
         return SearchHistoryRepositoryImpl(searchHistoryPreferences)
     }
 }
+

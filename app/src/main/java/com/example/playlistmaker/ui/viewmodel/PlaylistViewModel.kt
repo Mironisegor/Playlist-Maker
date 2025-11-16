@@ -2,7 +2,7 @@ package com.example.playlistmaker.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.di.Creator
 import com.example.playlistmaker.data.dto.Playlist
 import com.example.playlistmaker.data.network.PlaylistsRepositoryImpl
 import com.example.playlistmaker.data.dto.Track

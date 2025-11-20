@@ -213,7 +213,7 @@ fun PlaylistScreen(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .padding(bottom = 8.dp),
-                text = "2022",
+                text = playlist.description.ifEmpty { "" },
                 fontFamily = AppTypography.YSD_Regular400,
                 fontSize = 18.sp,
                 color = Color(0xFF1A1B22)

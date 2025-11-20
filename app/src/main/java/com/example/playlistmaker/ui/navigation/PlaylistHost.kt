@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.navigation
 
-import CreatePlaylistScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -17,11 +16,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.playlistmaker.ui.activity.main.MainScreen
 import com.example.playlistmaker.ui.activity.favorites.FavoritesScreen
+import com.example.playlistmaker.ui.activity.playlist.CreatePlaylistScreen
 import com.example.playlistmaker.ui.activity.playlist.PlaylistScreen
 import com.example.playlistmaker.ui.activity.playlist.PlaylistsScreen
 import com.example.playlistmaker.ui.activity.search.SearchScreen
 import com.example.playlistmaker.ui.activity.settings.SettingsScreen
 import com.example.playlistmaker.ui.activity.track.TrackDetailsScreen
+import com.example.playlistmaker.ui.viewmodel.NewPlaylistViewModel
 import com.example.playlistmaker.ui.viewmodel.PlaylistViewModel
 import com.example.playlistmaker.viewmodel.SearchViewModel
 
@@ -74,15 +75,19 @@ fun PlaylistHost(navController: NavHostController) {
                     },
                     onDeletePlaylist = {
                         playlistsViewModel.deletePlaylistById(currentPlaylist.id)
+                    },
+                    onUpdateCoverImage = { playlistId, coverUri ->
+                        playlistsViewModel.updatePlaylistCover(playlistId, coverUri)
                     }
                 )
             }
         }
 
         composable(Screen.CREATE_PLAYLIST.route) {
+            val newPlaylistViewModel: NewPlaylistViewModel = viewModel()
             CreatePlaylistScreen(
                 onBack = { navController.popBackStack() },
-                playlistViewModel = playlistsViewModel
+                newPlaylistViewModel = newPlaylistViewModel
             )
         }
 

@@ -16,8 +16,8 @@ class SearchHistoryPreferences(
     private val coroutineScope: CoroutineScope = CoroutineScope(CoroutineName("search-history-preferences") + SupervisorJob())
 ) {
     private val preferencesKey = stringPreferencesKey("search_history")
-    private val MAX_ENTRIES = 10
-    private val SEPARATOR = ","
+    private val maxEntries = 10
+    private val separator = ","
     fun addEntry(word: String) {
         if (word.isEmpty()) {
             return
@@ -27,20 +27,20 @@ class SearchHistoryPreferences(
             dataStore.edit { preferences ->
                 val historyString = preferences[preferencesKey].orEmpty()
                 val history = if (historyString.isNotEmpty()) {
-                    historyString.split(SEPARATOR).toMutableList()
+                    historyString.split(separator).toMutableList()
                 } else {
                     mutableListOf()
                 }
 
-                history.remove(word) // удаляем дубликат, если был
+                history.remove(word)
                 history.add(0, word)
 
-                val limitedHistory = if (history.size > MAX_ENTRIES) {
-                    history.subList(0, MAX_ENTRIES)
+                val limitedHistory = if (history.size > maxEntries) {
+                    history.subList(0, maxEntries)
                 } else {
                     history
                 }
-                val updatedString = limitedHistory.joinToString(SEPARATOR)
+                val updatedString = limitedHistory.joinToString(separator)
 
                 preferences[preferencesKey] = updatedString
             }
@@ -54,7 +54,7 @@ class SearchHistoryPreferences(
             if (historyString.isEmpty()) {
                 emptyList()
             } else {
-                historyString.split(SEPARATOR)
+                historyString.split(separator)
             }
         } catch (e: IOException) {
             emptyList()

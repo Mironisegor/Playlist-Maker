@@ -1,5 +1,14 @@
 package com.example.playlistmaker.ui.activity.playlist
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +33,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -32,28 +42,91 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.playlistmaker.ui.theme.AppTypography
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.dto.Playlist
 import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.ui.activity.search.TrackListItem
 import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat
 
+@SuppressLint("IntentReset")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistScreen(
     playlist: Playlist,
     navigateBack: () -> Unit,
     onNavigateToTrackDetails: (Track) -> Unit,
-    onDeletePlaylist: () -> Unit
+    onDeletePlaylist: () -> Unit,
+    onUpdateCoverImage: (Long, String?) -> Unit,
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedImageUri by remember { mutableStateOf(playlist.coverImageUri?.toCoverUri()) }
+    var showCoverPermissionDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val requiredPermission =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data
+            val savedPath = uri?.let { saveCoverToInternalStorage(context, it) }
+            if (savedPath != null) {
+                selectedImageUri = savedPath.toCoverUri()
+                onUpdateCoverImage(playlist.id, savedPath)
+            }
+        }
+    }
+    val openGallery = remember(galleryLauncher) {
+        {
+            val pickImageIntent = Intent(
+                Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            ).apply {
+                type = "image/*"
+            }
+            galleryLauncher.launch(pickImageIntent)
+        }
+    }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            openGallery()
+        }
+    }
+    val onCoverClick = remember {
+        {
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                requiredPermission
+            ) == PackageManager.PERMISSION_GRANTED
+            if (hasPermission) {
+                openGallery()
+            } else {
+                showCoverPermissionDialog = true
+            }
+        }
+    }
+    LaunchedEffect(playlist.coverImageUri) {
+        selectedImageUri = playlist.coverImageUri?.toCoverUri()
+    }
     val totalMinutes = playlist.tracks.sumOf { track ->
         val timeParts = track.trackTime.split(":")
         if (timeParts.size == 2) {
@@ -90,16 +163,34 @@ fun PlaylistScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
         }
-        Image(
-            modifier = Modifier
-                .size(312.dp)
-                .padding(top=4.dp)
-                .padding(horizontal = 8.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            painter = painterResource(id = R.drawable.add_photo_icon),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(Color.Gray)
-        )
+        val playlistImageModifier = Modifier
+            .size(312.dp)
+            .padding(top = 4.dp)
+            .padding(horizontal = 8.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onCoverClick() }
+        if (selectedImageUri != null) {
+            AsyncImage(
+                modifier = playlistImageModifier,
+                model = ImageRequest.Builder(context)
+                    .data(selectedImageUri)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+            )
+        } else {
+                Image(
+                    modifier = Modifier
+                        .padding(top = 120.dp)
+                        .padding(bottom = 80.dp)
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { onCoverClick() },
+                    painter = painterResource(id = R.drawable.add_photo_icon),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color.Gray)
+                )
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -283,6 +374,47 @@ fun PlaylistScreen(
                 }
             }
         }
+    }
+
+    if (showCoverPermissionDialog) {
+        AlertDialog(
+            onDismissRequest = { showCoverPermissionDialog = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.playlist_cover),
+                    fontFamily = AppTypography.YSD_Medium500,
+                    fontSize = 18.sp
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.permission_required),
+                    fontFamily = AppTypography.YSD_Regular400,
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showCoverPermissionDialog = false
+                        permissionLauncher.launch(requiredPermission)
+                    }
+                ) {
+                    Text(
+                        text = stringResource(R.string.select_image),
+                        fontFamily = AppTypography.YSD_Medium500
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCoverPermissionDialog = false }) {
+                    Text(
+                        text = stringResource(android.R.string.cancel),
+                        fontFamily = AppTypography.YSD_Regular400
+                    )
+                }
+            }
+        )
     }
 
     if (showDeleteDialog) {

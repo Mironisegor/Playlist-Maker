@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.di.Creator
 import com.example.playlistmaker.data.dto.Playlist
-import com.example.playlistmaker.data.network.PlaylistsRepositoryImpl
 import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.domain.PlaylistsRepository
 import com.example.playlistmaker.domain.TracksRepository
@@ -25,15 +24,15 @@ class PlaylistViewModel() : ViewModel() {
         return playlistsRepository.getPlaylist(playlistId)
     }
 
-    fun createNewPlayList(namePlaylist: String, description: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            playlistsRepository.addNewPlaylist(namePlaylist, description)
-        }
-    }
-
     fun insertSongToPlaylist(track: Track, playlistId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             tracksRepository.insertSongToPlaylist(track, playlistId)
+        }
+    }
+
+    fun updatePlaylistCover(playlistId: Long, coverImageUri: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistsRepository.updatePlaylistCover(playlistId, coverImageUri)
         }
     }
 

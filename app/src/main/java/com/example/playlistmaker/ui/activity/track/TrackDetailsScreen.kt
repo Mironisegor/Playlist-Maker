@@ -35,14 +35,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.playlistmaker.ui.theme.AppTypography
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.dto.Track
+import com.example.playlistmaker.ui.activity.playlist.toCoverModel
 import com.example.playlistmaker.ui.viewmodel.PlaylistViewModel
 import kotlinx.coroutines.launch
 
@@ -59,6 +63,7 @@ fun TrackDetailsScreen(
     val scope = rememberCoroutineScope()
     val playlists by playlistViewModel.playlists.collectAsState(initial = emptyList())
     val storedTrack by playlistViewModel.isExist(track).collectAsState(initial = null)
+    val context = LocalContext.current
 
     LaunchedEffect(storedTrack) {
         storedTrack?.let { currentTrack = it }
@@ -93,6 +98,10 @@ fun TrackDetailsScreen(
                 } else {
                     LazyColumn {
                         items(playlists) { playlist ->
+                            val imageModifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(45.dp)
+                                .clip(RoundedCornerShape(6.dp))
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -115,14 +124,24 @@ fun TrackDetailsScreen(
                                     .padding(top = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.add_photo_icon),
-                                    contentDescription = null,
-                                    tint = Color(0xFF1A1B22),
-                                    modifier = Modifier
-                                        .size(45.dp)
-                                        .padding(end = 8.dp)
-                                )
+                                if (!playlist.coverImageUri.isNullOrEmpty()) {
+                                    AsyncImage(
+                                        modifier = imageModifier,
+                                        model = ImageRequest.Builder(context)
+                                            .data(playlist.coverImageUri.toCoverModel())
+                                            .crossfade(true)
+                                            .build(),
+                                        contentDescription = playlist.name,
+                                        contentScale = ContentScale.Crop
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.add_photo_icon),
+                                        contentDescription = null,
+                                        tint = Color(0xFF1A1B22),
+                                        modifier = imageModifier
+                                    )
+                                }
                                 Column {
                                     Text(
                                         text = playlist.name,

@@ -78,6 +78,9 @@ fun FavoritesScreen(
                         track = favoriteTracks[index],
                         onClick = {
                             onNavigateToTrackDetails(favoriteTracks[index])
+                        },
+                        onLongClick = {
+                            playlistViewModel.toggleFavorite(favoriteTracks[index], false)
                         }
                     )
                 }

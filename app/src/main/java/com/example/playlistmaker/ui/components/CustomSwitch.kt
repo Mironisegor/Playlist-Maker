@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.activity.settings
+package com.example.playlistmaker.ui.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -70,3 +70,4 @@ fun CustomSwitch(
         )
     }
 }
+

@@ -42,12 +42,6 @@ class PlaylistViewModel() : ViewModel() {
         }
     }
 
-    fun deleteSongFromPlaylist(track: Track) {
-        viewModelScope.launch(Dispatchers.IO) {
-            tracksRepository.deleteSongFromPlaylist(track)
-        }
-    }
-
 
     fun deletePlaylistById(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -58,5 +52,11 @@ class PlaylistViewModel() : ViewModel() {
 
     fun isExist(track: Track): Flow<Track?> {
         return tracksRepository.getTrackByNameAndArtist(track = track)
+    }
+
+    fun mergePlaylists(sourcePlaylistId: Long, targetPlaylistId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistsRepository.mergePlaylists(sourcePlaylistId, targetPlaylistId)
+        }
     }
 }

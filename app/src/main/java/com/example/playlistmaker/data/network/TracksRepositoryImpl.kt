@@ -1,5 +1,6 @@
 package com.example.playlistmaker.data.network
 
+import android.annotation.SuppressLint
 import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.data.dto.TracksSearchRequest
@@ -55,9 +56,7 @@ class TracksRepositoryImpl(
     }
 
     override suspend fun deleteTracksByPlaylistId(playlistId: Long) {
-        // Сначала обнуляем playlistId у избранных треков, чтобы они остались в избранном
         trackDao.clearPlaylistIdForFavorites(playlistId)
-        // Затем удаляем треки, которые не в избранном
         trackDao.deleteNonFavoriteTracksByPlaylistId(playlistId)
     }
 }
@@ -86,6 +85,7 @@ private fun Track.toTrackEntity(): TrackEntity {
     )
 }
 
+@SuppressLint("DefaultLocale")
 private fun TrackDto.toDomainTrack(): Track? {
     val name = trackName?.takeIf { it.isNotBlank() } ?: return null
     val artist = artistName?.takeIf { it.isNotBlank() } ?: return null

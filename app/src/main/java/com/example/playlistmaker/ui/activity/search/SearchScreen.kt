@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.sp
 import com.example.playlistmaker.ui.theme.AppTypography
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.dto.SearchState
-import com.example.playlistmaker.viewmodel.SearchViewModel
+import com.example.playlistmaker.ui.viewmodel.SearchViewModel
 
 
 @Composable
@@ -61,17 +61,14 @@ fun SearchScreen(
     val searchHistory by viewModel.searchHistory.collectAsState()
     val savedSearchText by viewModel.searchText.collectAsState()
     
-    // Инициализируем текст из ViewModel только один раз при первом рендере
     var text by remember { mutableStateOf(savedSearchText) }
     
-    // Восстанавливаем текст из ViewModel при возврате на экран (когда savedSearchText меняется извне)
     LaunchedEffect(savedSearchText) {
         if (text != savedSearchText) {
             text = savedSearchText
         }
     }
-    
-    // Сохраняем текст в ViewModel при изменении пользователем
+
     LaunchedEffect(text) {
         if (viewModel.searchText.value != text) {
             viewModel.setSearchText(text)
@@ -83,14 +80,8 @@ fun SearchScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val showHistory = text.isEmpty() && searchHistory.isNotEmpty() && searchFieldFocused
-    
-    // Отслеживаем изменения текста и сбрасываем состояние в Initial когда текст пустой и фокус потерян
-    // Но не сбрасываем, если есть успешные результаты поиска (чтобы сохранить состояние при возврате)
+
     LaunchedEffect(text, searchFieldFocused, screenState) {
-        // Сбрасываем состояние только если:
-        // 1. Текст пустой
-        // 2. Фокус потерян
-        // 3. Нет успешных результатов поиска (чтобы не сбрасывать при возврате на экран)
         if (text.isEmpty() && !searchFieldFocused && screenState !is SearchState.Success) {
             viewModel.resetSearchState()
         }
@@ -239,7 +230,7 @@ fun SearchScreen(
             }
 
             if (showHistory) {
-                Box() {
+                Box {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()

@@ -1,7 +1,7 @@
 package com.example.playlistmaker.ui.activity.playlist
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,16 +25,19 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.dto.Playlist
-import com.example.playlistmaker.ui.activity.playlist.toCoverModel
 
 @Composable
-fun PlaylistListItem(playlist: Playlist, onClick: () -> Unit) {
+fun PlaylistListItem(
+    playlist: Playlist,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 13.dp)
             .padding(top = 5.dp)
-            .clickable(onClick = onClick),
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val imageModifier = Modifier

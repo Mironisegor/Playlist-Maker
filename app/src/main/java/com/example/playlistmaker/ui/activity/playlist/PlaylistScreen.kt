@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -164,9 +165,9 @@ fun PlaylistScreen(
             Spacer(modifier = Modifier.weight(1f))
         }
         val playlistImageModifier = Modifier
-            .size(312.dp)
             .padding(top = 4.dp)
             .padding(horizontal = 8.dp)
+            .size(312.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable { onCoverClick() }
         if (selectedImageUri != null) {
@@ -177,6 +178,7 @@ fun PlaylistScreen(
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
+                contentScale = ContentScale.Crop
             )
         } else {
                 Image(

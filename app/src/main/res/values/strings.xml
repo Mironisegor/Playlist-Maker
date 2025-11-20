@@ -39,4 +39,7 @@
     <string name="no_favorites_tracks">Ваша медиатека пуста</string>
     <string name="problems_with_connection">Проблемы со связью</string>
     <string name="info_problem_with_connection">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="merge_playlists_title">Слить с другим плейлистом</string>
+    <string name="no_other_playlists">Нет других плейлистов</string>
+    <string name="playlist_merge_message">%1$s слит с %2$s</string>
 </resources>

@@ -13,4 +13,6 @@ interface PlaylistsRepository {
     suspend fun deletePlaylistById(id: Long)
 
     suspend fun updatePlaylistCover(playlistId: Long, coverImageUri: String?)
+
+    suspend fun mergePlaylists(sourcePlaylistId: Long, targetPlaylistId: Long)
 }

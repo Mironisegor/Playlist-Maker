@@ -1,4 +1,4 @@
-package com.example.playlistmaker.viewmodel
+package com.example.playlistmaker.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -26,7 +26,7 @@ class SearchViewModel(
     private val _searchHistory = MutableStateFlow<List<String>>(emptyList())
     val searchHistory = _searchHistory.asStateFlow()
     
-    private val _searchText = MutableStateFlow<String>("")
+    private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
     
     init {
@@ -48,10 +48,8 @@ class SearchViewModel(
                 _searchScreenState.update { SearchState.Initial }
                 return@launch
             }
-            // Сохраняем текст поиска
             _searchText.value = query
             try {
-                // Сохраняем запрос в историю
                 searchHistoryRepository.addSearchQuery(query)
                 loadSearchHistory()
                 

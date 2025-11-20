@@ -24,7 +24,7 @@ import com.example.playlistmaker.ui.activity.settings.SettingsScreen
 import com.example.playlistmaker.ui.activity.track.TrackDetailsScreen
 import com.example.playlistmaker.ui.viewmodel.NewPlaylistViewModel
 import com.example.playlistmaker.ui.viewmodel.PlaylistViewModel
-import com.example.playlistmaker.viewmodel.SearchViewModel
+import com.example.playlistmaker.ui.viewmodel.SearchViewModel
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable

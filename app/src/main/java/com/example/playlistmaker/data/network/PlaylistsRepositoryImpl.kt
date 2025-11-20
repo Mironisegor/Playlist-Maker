@@ -1,5 +1,6 @@
 package com.example.playlistmaker.data.network
 
+import androidx.room.withTransaction
 import com.example.playlistmaker.data.dto.Playlist
 import com.example.playlistmaker.data.dto.Track
 import com.example.playlistmaker.database.AppDatabase
@@ -76,6 +77,14 @@ class PlaylistsRepositoryImpl(
 
     override suspend fun updatePlaylistCover(playlistId: Long, coverImageUri: String?) {
         playlistDao.updatePlaylistCover(playlistId, coverImageUri)
+    }
+
+    override suspend fun mergePlaylists(sourcePlaylistId: Long, targetPlaylistId: Long) {
+        if (sourcePlaylistId == targetPlaylistId) return
+        database.withTransaction {
+            trackDao.moveTracksToPlaylist(sourcePlaylistId, targetPlaylistId)
+            playlistDao.deletePlaylistById(sourcePlaylistId)
+        }
     }
 }
 

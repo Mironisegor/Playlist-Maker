@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.activity.playlist
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -12,28 +13,42 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.playlistmaker.ui.theme.AppTypography
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.dto.Playlist
+import com.example.playlistmaker.ui.theme.AppTypography
 import com.example.playlistmaker.ui.viewmodel.PlaylistViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistsScreen(
     modifier: Modifier,
@@ -43,7 +58,118 @@ fun PlaylistsScreen(
     navigateBack: () -> Unit
 ) {
     val playlists by playlistViewModel.playlists.collectAsState(emptyList())
+    var showMergeSheet by remember { mutableStateOf(false) }
+    var selectedPlaylist by remember { mutableStateOf<Playlist?>(null) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
+    val hideSheet: () -> Unit = {
+        scope.launch {
+            sheetState.hide()
+        }.invokeOnCompletion {
+            showMergeSheet = false
+            selectedPlaylist = null
+        }
+    }
+
+    if (showMergeSheet && selectedPlaylist != null) {
+        val currentPlaylist = selectedPlaylist!!
+        val otherPlaylists = playlists.filter { it.id != currentPlaylist.id }
+        ModalBottomSheet(
+            onDismissRequest = hideSheet,
+            sheetState = sheetState
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.merge_playlists_title),
+                    fontFamily = AppTypography.YSD_Medium500,
+                    fontSize = 20.sp,
+                    color = Color(0xFF1A1B22),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                if (otherPlaylists.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.no_other_playlists),
+                        color = Color(0xFFAEAFB4),
+                        fontFamily = AppTypography.YSD_Regular400,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                } else {
+                    LazyColumn {
+                        items(otherPlaylists) { playlist ->
+                            val imageModifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(45.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        playlistViewModel.mergePlaylists(currentPlaylist.id, playlist.id)
+                                        Toast
+                                            .makeText(
+                                                context,
+                                                context.getString(
+                                                    R.string.playlist_merge_message,
+                                                    currentPlaylist.name,
+                                                    playlist.name
+                                                ),
+                                                Toast.LENGTH_SHORT
+                                            )
+                                            .show()
+                                        hideSheet()
+                                    }
+                                    .padding(horizontal = 13.dp)
+                                    .padding(vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (!playlist.coverImageUri.isNullOrEmpty()) {
+                                    AsyncImage(
+                                        modifier = imageModifier,
+                                        model = ImageRequest.Builder(context)
+                                            .data(playlist.coverImageUri.toCoverModel())
+                                            .crossfade(true)
+                                            .build(),
+                                        contentDescription = playlist.name,
+                                        contentScale = ContentScale.Crop
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.add_photo_icon),
+                                        contentDescription = null,
+                                        tint = Color(0xFF1A1B22),
+                                        modifier = imageModifier
+                                    )
+                                }
+                                Column {
+                                    Text(
+                                        text = playlist.name,
+                                        fontFamily = AppTypography.YSD_Regular400,
+                                        fontSize = 16.sp,
+                                        color = Color(0xFF000000)
+                                    )
+                                    val amountOfTracks = "${playlist.tracks.size} треков"
+                                    Text(
+                                        text = amountOfTracks,
+                                        fontFamily = AppTypography.YSD_Regular400,
+                                        fontSize = 11.sp,
+                                        color = Color(0xFFAEAFB4),
+                                        modifier = Modifier.padding(top = 1.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -87,9 +213,18 @@ fun PlaylistsScreen(
             ) {
                 LazyColumn(modifier = modifier.fillMaxSize()) {
                     items(playlists.size) { index ->
-                        PlaylistListItem(playlist = playlists[index], onClick = { 
-                            navigateToPlaylist(playlists[index].id)
-                        })
+                        PlaylistListItem(
+                            playlist = playlists[index],
+                            onClick = {
+                                navigateToPlaylist(playlists[index].id)
+                            },
+                            onLongClick = {
+                                if (playlists.size > 1) {
+                                    selectedPlaylist = playlists[index]
+                                    showMergeSheet = true
+                                }
+                            }
+                        )
                     }
                 }
             }

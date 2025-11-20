@@ -33,5 +33,8 @@ interface TrackDao {
 
     @Query("DELETE FROM tracks WHERE playlistId = :playlistId")
     suspend fun deleteTracksByPlaylistId(playlistId: Long)
+
+    @Query("UPDATE tracks SET playlistId = :targetPlaylistId WHERE playlistId = :sourcePlaylistId")
+    suspend fun moveTracksToPlaylist(sourcePlaylistId: Long, targetPlaylistId: Long)
 }
 
